@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>DA-IICT.AC.IN</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+    <link rel="stylesheet" th:href="@{/css/index.css}"/>
+    <script th:src="@{/js/footer.js}" defer></script>
+    <script th:src="@{/js/login.js}" defer></script>
+</head>
+<body bgcolor="#EBF5FD" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<br>
+<form th:action="@{/login}" method="post">
+    <input type="hidden"
+           th:name="${_csrf.parameterName}"
+           th:value="${_csrf.token}" />
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td align="left" valign="top">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td align="left" valign="bottom">
+                            <img th:src="@{/images/curve.gif}" width="204" height="14">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left" valign="top" th:style="'background-image: url(' + @{/images/blueline.gif} + ');'">
+                            <img th:src="@{/images/blueline.gif}" width="22" height="13">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <td align="left" valign="top" th:style="'background-image: url(' + @{/images/bglines.gif} + ');'">
+                                        <table border="0" cellpadding="0" cellspacing="0">
+                                            <tr>
+                                                <td><img th:src="@{/images/login_01.gif}" width="11" height="2"></td>
+                                                <td><img th:src="@{/images/login_02.gif}" width="66" height="2"></td>
+                                                <td><img th:src="@{/images/login_03.gif}" width="127" height="2"></td>
+                                                <td><img th:src="@{/images/login_04.gif}" width="4" height="2"></td>
+                                                <td><img th:src="@{/images/login_05.gif}" width="387" height="2"></td>
+                                                <td><img th:src="@{/images/login_06.gif}" width="14" height="2"></td>
+                                                <td><img th:src="@{/images/login_07.gif}" width="3" height="2"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td><img th:src="@{/images/logo1.GIF}" width="127" height="22"></td>
+                                                <td><img th:src="@{/images/login_11.gif}" width="4" height="22"></td>
+                                                <td bgcolor="#0079BD"><font face="Arial, Helvetica, sans-serif" size="2"><b><font color="#00FDFF">&nbsp;</font></b></font></td>
+                                                <td bgcolor="#0079BD"><font face="Arial, Helvetica, sans-serif" size="2"><b><font color="#00FDFF">&nbsp;</font></b></font></td>
+                                                <td><img th:src="@{/images/login_14.gif}" width="4" height="22"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td bgcolor="#0079BD"><img th:src="@{/images/logo2.GIF}" width="127" height="52"></td>
+                                                <td bgcolor="#0079BD">&nbsp;</td>
+                                                <td colspan="2" rowspan="4" align="left" valign="top" bgcolor="#FFFFFF">
+                                                    <table width="100%" border="0" cellspacing="1" cellpadding="0">
+                                                        <tr>
+                                                            <td align="center" valign="center">
+                                                                <img th:src="@{/images/2img_daiict02.jpg}">
+                                                            </td>
+                                                            <td align="left" valign="top" width="243">
+                                                                <img th:src="@{/images/2img_daiict.jpg}" height="231" width="243">
+                                                            </td>
+                                                            <td align="left" valign="top" width="155">
+                                                                <img th:src="@{/images/1img_daiict.jpg}" height="231" width="155">
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                                <td bgcolor="#0079BD">&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td bgcolor="#0079BD"><img th:src="@{/images/login_22.gif}" width="11" height="100"></td>
+                                                <td colspan="2" align="left" valign="middle" bgcolor="#0079BD">
+                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                        <tr>
+                                                            <td align="left" valign="top" width="6%" bgcolor="#0079BD">
+                                                                <img th:src="@{/images/login_23.gif}" width="66" height="51">
+                                                            </td>
+                                                            <td align="left" valign="top" width="94%">
+                                                                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                                    <tr>
+                                                                        <td valign="middle" height="25" bgcolor="#0079BD">
+                                                                            <div align="center">
+                                                                                <input type="text" name="username" style="font-family: Verdana; font-size: 8pt" size="15" tabindex="1">
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td valign="middle" height="25" bgcolor="#0079BD">
+                                                                            <div align="center">
+                                                                                <input type="password" name="password" style="font-family: Verdana; font-size: 8pt" size="15" tabindex="2">
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td valign="middle" height="25" bgcolor="#0079BD">
+                                                                            <div align="left" style="padding-left: 20px;">
+                                                                                <a th:href="@{/auth/forgot-password}"
+                                                                                   style="font-family: Verdana; font-size: 8pt; color: white; text-decoration: underline;">
+                                                                                    Forgot Password?
+                                                                                </a>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td align="left" valign="bottom" bgcolor="#0079BD">
+                                                                            <div align="center">
+                                                                                <button type="submit" style="border: none; background: none; padding: 0; cursor: pointer;"
+                                                                                        onmouseout="MM_swapImgRestore()"
+                                                                                        onmouseover="MM_swapImage('ENTER','','images/enter2.gif',1)">
+                                                                                    <img name="ENTER" border="0" th:src="@{/images/enter.gif}" width="93" height="27" alt="ENTER">
+                                                                                </button>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                                <td bgcolor="#0079BD">&nbsp;</td>
+                                                <td bgcolor="#0079BD">&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td bgcolor="#0079BD"><img th:src="@{/images/login_29.gif}" width="11" height="7"></td>
+                                                <td bgcolor="#0079BD"><img th:src="@{/images/login_30.gif}" width="66" height="7"></td>
+                                                <td bgcolor="#0079BD"><img th:src="@{/images/login_31.gif}" width="127" height="7"></td>
+                                                <td bgcolor="#0079BD"><img th:src="@{/images/login_32.gif}" width="4" height="7"></td>
+                                                <td bgcolor="#0079BD"><img th:src="@{/images/login_35.gif}" width="3" height="7"></td>
+                                            </tr>
+                                            <tr>
+                                                <td><img th:src="@{/images/login_36.gif}" width="11" height="81"></td>
+                                                <td th:style="'background-image: url(' + @{/images/login_38.gif} + ');'">&nbsp;</td>
+                                                <td th:style="'background-image: url(' + @{/images/login_38.gif} + ');'">&nbsp;</td>
+                                                <td bgcolor="#0079BD">&nbsp;</td>
+                                                <td bgcolor="#0079BD">&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td><img th:src="@{/images/login_43.gif}" width="11" height="4"></td>
+                                                <td><img th:src="@{/images/login_44.gif}" width="66" height="4"></td>
+                                                <td><img th:src="@{/images/login_45.gif}" width="127" height="4"></td>
+                                                <td bgcolor="#0079BD"><img th:src="@{/images/login_46.gif}" width="4" height="4"></td>
+                                                <td bgcolor="#0079BD"><img th:src="@{/images/login_47.gif}" width="387" height="4"></td>
+                                                <td bgcolor="#0079BD"><img th:src="@{/images/login_48.gif}" width="14" height="4"></td>
+                                                <td bgcolor="#0079BD"><img th:src="@{/images/login_49.gif}" width="3" height="4"></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td width="12">
+                                        <div align="right">
+                                            <img th:src="@{/images/bglines.gif}" width="12" height="270">
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left" valign="top" th:style="'background-image: url(' + @{/images/blueline.gif} + ');'">
+                            <img th:src="@{/images/blueline.gif}" width="22" height="13">
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <br>
+</form>
+
+
+
+
+
+</body>
+</html>

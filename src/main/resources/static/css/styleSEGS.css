@@ -1,0 +1,195 @@
+BODY
+{
+	BACKGROUND-COLOR : white;
+
+	FONT-FAMILY : arial,helvetica,sans-serif;
+	FONT-SIZE : 12pt;
+	MARGIN-LEFT :0px;
+	MARGIN-RIGHT: 0px;
+	MARGIN-TOP: 0px;
+	MARGIN-BOTTOM: 0px;
+	TEXT-ALIGN: left;
+	LINE-SPACE : 1;
+}
+
+TABLE.entrytbl
+{
+    BACKGROUND-COLOR: white;
+    MARGIN-LEFT : 15pt;
+    cellpadding : 0;
+    cellspacing : 0;
+    border-collapse: collapse;
+
+}
+
+
+
+TD.entryfld
+{
+    BACKGROUND-COLOR: white;
+    COLOR: black;
+    font-size: 12pt;
+}
+
+TD.entrylbl
+{
+    BACKGROUND-COLOR: white;
+    COLOR: black;
+    font-size: 12pt;
+    width : 195;
+    height : 25;
+}
+
+
+
+TABLE.formtbl
+{
+    BACKGROUND-COLOR: white;
+    MARGIN-LEFT : 15pt;
+    BORDER-COLLAPSE : collapse;
+ }
+
+TD.formheader
+{
+	BACKGROUND-COLOR : #D6D6D6;
+      MARGIN-LEFT : 15pt;
+	COLOR: #000000;
+      FONT-SIZE: 12pt;
+
+}
+
+TD.formlbl
+{
+    BACKGROUND-COLOR : white;
+    FONT-SIZE: 12pt;
+    COLOR: black;
+}
+
+TD.formfld
+{
+    BACKGROUND-COLOR:#white;
+    COLOR: black;
+    font-size: 12pt;
+}
+
+TABLE.listtbl
+{
+    BACKGROUND-COLOR: white;
+    MARGIN-LEFT : 15pt;
+    BORDER-COLLAPSE : collapse;
+ }
+
+TD.listlbl
+{
+
+    FONT-SIZE: 12pt;
+    COLOR: black;
+    BACKGROUND-COLOR : #D6D6D6;
+}
+
+TD.listfld
+{
+    BACKGROUND-COLOR:#white;
+    COLOR: black;
+    font-size: 12pt;
+}
+
+TABLE.querytbl
+{
+    BACKGROUND-COLOR: white;
+    MARGIN-LEFT : 15pt;
+    FONT-SIZE: 12pt;
+    FONT-FAMILY : arial,helvetica,sans-serif;
+    TABLE-BORDER : black;
+}
+
+TD.queryheader
+{
+	BACKGROUND-COLOR : #D6D6D6;
+      MARGIN-LEFT : 15pt;
+	COLOR: #000000;
+      FONT-SIZE: 12pt;
+
+}
+
+TD.querylbl
+{
+    BACKGROUND-COLOR : white;
+    FONT-SIZE: 12pt;
+    FONT-COLOR: black;
+    COLOR: #000000;
+
+}
+
+TD.queryfld
+{
+    BACKGROUND-COLOR:white;
+    COLOR: black;
+    font-size: 12pt;
+}
+
+
+TABLE.leftframe
+{
+
+    MARGIN-LEFT : 15pt;
+    FONT-SIZE: 12pt;
+    FONT-FAMILY : arial,helvetica,sans-serif;
+    MARGIN-TOP :0px;
+    MARGIN-LEFT :0px;
+    TEXT-ALIGN: center;
+    BORDERCOLOR : black;
+
+    WIDTH : 103;
+    LEFT : 0;
+    TOP : 0;
+    cellpadding : 0;
+    cellspacing : 0;
+    align : left;
+    border : 1;
+
+   border-collapse : collapse;
+   position: relative;
+
+
+}
+
+
+TD.leftheader
+{
+BACKGROUND-COLOR : #D6D6D6;
+ALIGN : center;
+FONT-WEIGHT: bold;
+}
+
+
+TD.leftcell
+{
+BACKGROUND-COLOR : white;
+FONT-WEIGHT: normal;
+
+ALIGN : center;
+FONT-WEIGHT: bold;
+width:99;
+height : 61;
+}
+
+.btn
+{
+position: relative;
+width: 100;
+height: 25
+}
+
+SELECT.entry
+{
+
+positioning : relative;
+width : 150;
+height : 25;
+height : 1;
+FONT-FAMILY : arial,helvetica,sans-serif;
+FONT-SIZE : 10pt;
+
+}
+

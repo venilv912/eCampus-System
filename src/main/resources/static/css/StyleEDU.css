@@ -1,0 +1,154 @@
+BODY {
+    MARGIN-TOP: 60px;
+    OVERFLOW: hidden;
+    BACKGROUND-COLOR: white;
+    BACKGROUND-IMAGE: url('/images/menu/bgimage.gif');
+    COLOR: black;
+    FONT: 80% arial,helvetica, sans-serif;
+    MARGIN-RIGHT: 0px;
+    MARGIN-LEFT: 82px;
+    MARGIN-TOP: 0px;
+    MARGIN-BOTTOM: 0px;
+    TEXT-ALIGN: center;
+    TABLE-ALIGN: center;
+    SCROLLBAR-FACE-COLOR: #ffffff;
+    SCROLLBAR-HIGHLIGHT-COLOR: #000000;
+    SCROLLBAR-SHADOW-COLOR: #000000;
+    SCROLLBAR-3DLIGHT-COLOR: #ffffff;
+    SCROLLBAR-ARROW-COLOR: #666666;
+    SCROLLBAR-TRACK-COLOR: #ffffff;
+    SCROLLBAR-DARKSHADOW-COLOR: #ffffff;
+}
+
+A:link {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 8pt;
+    color: #205AA7;
+    text-decoration: none
+}
+
+A:visited {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 8pt;
+    color: #205AA7;
+    text-decoration: none
+}
+
+A:hover {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 8pt;
+    color: #205Aff;
+    TEXT-DECORATION: underline
+}
+
+TABLE.querytbl {
+    BACKGROUND-COLOR: #000000;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+TD.querylbl {
+    BACKGROUND-COLOR:#D6C8BC;
+    COLOR: #000000;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: bold;
+    PADDING-LEFT:3px;
+}
+
+TD.queryfld {
+    BACKGROUND-COLOR:#FFFEF6;
+    COLOR: #000000;
+    font-size: 8pt;
+    PADDING-LEFT:3px;
+}
+
+TABLE.formtbl {
+    BACKGROUND-COLOR: #000000;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+TD.formlbl {
+    BACKGROUND-COLOR:#D6C8BC;
+    COLOR: #000000;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: bold;
+    PADDING-LEFT:3px;
+}
+
+TD.formfld {
+    BACKGROUND-COLOR:#FFFEF6;
+    COLOR: #000000;
+    font-size: 8pt;
+    PADDING-LEFT:3px;
+}
+
+TD.formtxt {
+    BACKGROUND-COLOR:#FFFEF6;
+    COLOR: #555555;
+    font-size: 8pt;
+}
+
+TABLE.listtbl {
+    BACKGROUND-COLOR: #000000;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+TD.listlbl {
+    BACKGROUND-COLOR:#D6C8BC;
+    COLOR: #000000;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: bold;
+    PADDING-LEFT:3px;
+}
+
+TD.listfld {
+    BACKGROUND-COLOR:#FFFEF6;
+    COLOR: #000000;
+    font-size: 8pt;
+    PADDING-LEFT:3px;
+}
+
+TD.listfld1 {
+    BACKGROUND-COLOR:#90EE90;
+    COLOR: #000000;
+    font-size: 8pt;
+    PADDING-LEFT:3px;
+}
+
+.btn {
+    BORDER-RIGHT: #000000 1px solid;
+    BORDER-TOP: #000000 1px solid;
+    BORDER-LEFT: #000000 1px solid;
+    BORDER-BOTTOM: #000000 1px solid;
+    BACKGROUND-COLOR: #FFFFCC;
+}
+
+.txtbox {
+    BORDER-RIGHT: #000000 1px solid;
+    BORDER-TOP: #000000 1px solid;
+    BORDER-LEFT: #000000 1px solid;
+    BORDER-BOTTOM: #000000 1px solid;
+    BACKGROUND-COLOR: #FFFFDD;
+}
+
+.selectbox {
+    BORDER-RIGHT: #000000 1px solid;
+    BORDER-TOP: #000000 1px solid;
+    BORDER-LEFT: #000000 1px solid;
+    BORDER-BOTTOM: #000000 1px solid;
+    BACKGROUND-COLOR: #FFFFEE;
+}
+.menu-bar {
+    margin: 0;
+    padding: 0;
+}
+
+.menu-item {
+    box-sizing: border-box;
+}
+
+.menu-item + .menu-item {
+    border-left: none;
+}
