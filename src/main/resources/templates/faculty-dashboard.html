@@ -7,8 +7,15 @@
     <link rel="stylesheet" th:href="@{/css/navbar.css}">
 </head>
 <body>
+    <!-- HEADER -->
+    <div th:replace="fragments/header :: header"></div>
+
+    <!-- NAVBAR -->
     <div th:replace="fragments/navbar :: navbar"></div>
 
     <h1> Faculty Dashboard </h1>
+
+    <!-- FOOTER -->
+    <div th:replace="fragments/footer :: footer"></div>
 </body>
 </html>
