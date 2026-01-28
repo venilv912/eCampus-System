@@ -19,7 +19,7 @@
             <a th:href="@{/student/registration}">Registration</a>
         </li>
 
-        <!-- Student Dropdown -->
+        <!-- Student Dropdown for Add-Drop Courses -->
         <li class="dropdown" sec:authorize="hasRole('STUDENT')">
             <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
                 Course Adjustments
@@ -68,8 +68,23 @@
             <a th:href="@{/admin/batches}">Batches</a>
         </li>
 
-        <li sec:authorize="hasRole('ADMIN')">
-            <a th:href="@{/admin/semesters}">Semesters</a>
+        <!-- Student Dropdown for Add-Drop Courses -->
+        <li class="dropdown" sec:authorize="hasRole('ADMIN')">
+            <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
+                Semesters
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a class="dropdown-item" th:href="@{/admin/semesters}">
+                        Semesters
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" th:href="@{/admin/semestercourses}">
+                        Semester Courses
+                    </a>
+                </li>
+            </ul>
         </li>
 
         <li sec:authorize="hasRole('ADMIN')">

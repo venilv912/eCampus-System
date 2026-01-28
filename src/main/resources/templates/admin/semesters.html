@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Semesters</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div th:replace="fragments/header :: header"></div>
+
+<!-- NAVBAR -->
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<div class="container mt-3">
+
+    <h2>Semesters</h2>
+
+    <div th:each="entry : ${semestersByTerm}">
+
+        <h4 class="mt-4" th:text="'Term: ' + ${entry.key}"></h4>
+
+        <table class="table table-bordered mt-2">
+            <thead class="table-light">
+            <tr>
+                <th style="background-color: #003366; color: white;">Semester ID</th>
+                <th style="background-color: #003366; color: white;">Batch</th>
+                <th style="background-color: #003366; color: white;">Semester</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="sem : ${entry.value}">
+                <td th:text="${sem.strid}"></td>
+                <td th:text="${sem.batch}"></td>
+                <td th:text="${sem.semester}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+
+<!-- FOOTER -->
+<div th:replace="fragments/footer :: footer"></div>
+
+</div>
+
+</body>
+</html>
