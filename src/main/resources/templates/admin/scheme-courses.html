@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Scheme Courses</title>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+</head>
+<body>
+<!-- HEADER -->
+<div th:replace="fragments/header :: header"></div>
+
+<!-- NAVBAR -->
+<div th:replace="fragments/navbar :: navbar"></div>
+<div class="container mt-3">
+    <h2>Scheme Courses for Scheme ID: <span th:text="${schemeId}"></span></h2>
+
+    <div th:each="entry : ${groupedCourses}">
+        <h4 class="mt-4" th:text="${entry.key.semesterName}">Semester Name</h4>
+
+        <table class="table table-bordered mt-2">
+            <thead class="table-light">
+            <tr>
+                <th>Course Code</th>
+                <th>Course Title</th>
+                <th>Course Type</th>
+                <th>Lecture Hours</th>
+                <th>Tutorial Hours</th>
+                <th>Practical Hours</th>
+                <th>Total Credits</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="course : ${entry.value}">
+                <td th:text="${course.courseCode}">CS101</td>
+                <td th:text="${course.courseTitle}">Intro to CS</td>
+                <td th:text="${course.ctpcode}">TH</td>
+                <td th:text="${course.lectureHours}">3</td>
+                <td th:text="${course.tutorialHours}">1</td>
+                <td th:text="${course.practicalHours}">2</td>
+                <td th:text="${course.totalCredits}">5</td>
+                <td class="d-flex gap-2">
+                    <span th:if="${course.splid} == ${splid}">
+                        <a class="btn btn-sm btn-warning"
+                           th:href="@{/admin/programs/{programId}/schemes/{schemeId}/{splid}/scheme-courses/edit(programId=${programId}, schemeId=${schemeId}, splid=${splid}, termName=${course.termName}, programYear=${course.programYear}, courseSrNo=${course.courseSrNo})}">
+                            Edit
+                        </a>
+                        <a class="btn btn-sm btn-danger"
+                           th:href="@{/admin/programs/{programId}/schemes/{schemeId}/{splid}/scheme-courses/delete(programId=${programId}, schemeId=${schemeId}, splid=${splid}, termName=${course.termName}, programYear=${course.programYear}, courseSrNo=${course.courseSrNo})}"
+                           onclick="return confirm('Are you sure you want to delete this course?');">
+                            Delete
+                        </a>
+                    </span>
+                    <span th:unless="${course.splid} == ${splid}">
+                        <button class="btn btn-sm btn-outline-secondary" onclick="alert('This course belongs to the general degree; update it from the general degree page.');">Edit</button>
+                        <button class="btn btn-sm btn-outline-secondary ms-1" onclick="alert('This course belongs to the general degree; update it from the general degree page.');">Delete</button>
+                    </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <a class="btn btn-success btn-sm mb-3"
+           th:href="@{/admin/programs/{programId}/schemes/{schemeId}/{splid}/scheme-courses/add(programId=${programId}, schemeId=${schemeId}, splid=${splid}, termName=${entry.key.termName}, programYear=${entry.key.programYear}, semesterName=${entry.key.semesterName}, termSeqNo=${entry.key.termSeqNo})}">
+            Add Course to <span th:text="${entry.key.semesterName}"></span>
+        </a>
+    </div>
+
+    <a class="btn btn-secondary mt-4" th:href="@{/admin/programs/{programId}/schemes/{schemeId}(programId=${programId}, schemeId=${schemeId})}">
+        ← Back to Schemes
+    </a>
+
+    <!-- FOOTER -->
+    <div th:replace="fragments/footer :: footer"></div>
+</div>
+</body>
+</html>
