@@ -39,7 +39,8 @@ public interface UserRepository extends JpaRepository<Users, Long>, UserDetailsR
     @Query(value = """
         SELECT * FROM ec2.users
         WHERE urole = '913'
-          AND row_state > 0
+        AND ufullname is not null
+        AND row_state > 0
         ORDER BY ufullname
         """,
             nativeQuery = true)

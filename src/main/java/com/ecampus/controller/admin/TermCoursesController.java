@@ -27,6 +27,12 @@ public class TermCoursesController {
     @Autowired
     private AcademicYearsRepository academicYearRepository;
 
+    @Autowired
+    private CoursesRepository coursesRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
     // LIST TERM COURSES (DESC ORDER BY termId, then courseCode)
     @GetMapping
     public String listTermCourses(Model model) {
@@ -66,6 +72,11 @@ public class TermCoursesController {
 
         model.addAttribute("coursesByAcademicYearThenTerm", coursesByAcademicYearThenTerm);
         model.addAttribute("termIdMap", termIdMap);
+        
+        // Find the maximum (latest) academic year name for showing buttons only on latest terms
+        String maxAyrname = coursesByAcademicYearThenTerm.keySet().stream().findFirst().orElse("");
+        model.addAttribute("maxAyrname", maxAyrname);
+        
         return "admin/termcourses";
     }
 
@@ -150,5 +161,170 @@ public class TermCoursesController {
         }
 
         return "redirect:/admin/term-courses";
+    }
+
+    // EDIT TERM COURSES PAGE
+    @GetMapping("/edit")
+    public String editTermCourses(@RequestParam("termId") Long termId, Model model) {
+        // Get term details
+        Terms term = termRepository.findById(termId)
+                .orElseThrow(() -> new RuntimeException("Term not found: " + termId));
+        
+        AcademicYears academicYear = academicYearRepository.findById(term.getTrmayrid())
+                .orElseThrow(() -> new RuntimeException("Academic Year not found"));
+
+        // Get all faculty for the Faculty dropdown and build a map
+        List<Users> allFaculty = userRepository.findAllFacultyList();
+        Map<Long, String> facultyMap = allFaculty.stream()
+                .collect(Collectors.toMap(Users::getUid, Users::getUfullname, (a, b) -> a));
+
+        // Get all term courses for this term
+        List<TermCourses> allTermCourses = termCourseRepository.findByTcrtrmidOrderByTcrid(termId);
+
+        // Separate into electives and core/IP courses
+        List<TermCourseEditDTO> electives = new ArrayList<>();
+        List<TermCourseEditDTO> coreAndIP = new ArrayList<>();
+
+        for (TermCourses tc : allTermCourses) {
+            Courses course = tc.getCourse();
+            if (course == null) continue;
+
+            String credithours = course.getCrscreditpoints() + " (" + 
+                    course.getCrslectures() + " + " + 
+                    course.getCrstutorials() + " + " + 
+                    course.getCrspracticals() + ")";
+
+            // Get faculty name from map
+            String facultyName = tc.getTcrfacultyid() != null ? facultyMap.get(tc.getTcrfacultyid()) : null;
+
+            TermCourseEditDTO dto = new TermCourseEditDTO(
+                    tc.getTcrid(),
+                    tc.getTcrcrsid(),
+                    course.getCrscode(),
+                    course.getCrstitle(),
+                    credithours,
+                    tc.getTcrmarks(),
+                    tc.getTcrfacultyid(),
+                    facultyName,
+                    tc.getTcrslot(),
+                    tc.getCrstype()
+            );
+
+            if ("ELECTIVE".equalsIgnoreCase(tc.getCrstype())) {
+                electives.add(dto);
+            } else {
+                coreAndIP.add(dto);
+            }
+        }
+
+        // Get all courses for the Add Elective dropdown
+        List<Courses> allCourses = coursesRepository.findAll();
+
+        model.addAttribute("term", term);
+        model.addAttribute("academicYear", academicYear);
+        model.addAttribute("electives", electives);
+        model.addAttribute("coreAndIP", coreAndIP);
+        model.addAttribute("allCourses", allCourses);
+        model.addAttribute("allFaculty", allFaculty);
+        model.addAttribute("termId", termId);
+
+        return "admin/edit-termcourses";
+    }
+
+    // SAVE TERM COURSES (batch update marks, faculty, slot)
+    @PostMapping("/save")
+    @Transactional
+    public String saveTermCourses(
+            @RequestParam("termId") Long termId,
+            @RequestParam("tcrid") List<Long> tcrids,
+            @RequestParam(value = "tcrmarks", required = false) List<Long> tcrmarksList,
+            @RequestParam(value = "tcrfacultyid", required = false) List<Long> tcrfacultyidList,
+            @RequestParam(value = "tcrslot", required = false) List<Long> tcrslotList,
+            RedirectAttributes redirectAttributes) {
+
+        for (int i = 0; i < tcrids.size(); i++) {
+            Long tcrid = tcrids.get(i);
+            TermCourses tc = termCourseRepository.findByTcrid(tcrid);
+            if (tc == null) continue;
+
+            Long marks = (tcrmarksList != null && i < tcrmarksList.size()) ? tcrmarksList.get(i) : null;
+            Long facultyId = (tcrfacultyidList != null && i < tcrfacultyidList.size()) ? tcrfacultyidList.get(i) : null;
+            Long slot = (tcrslotList != null && i < tcrslotList.size()) ? tcrslotList.get(i) : null;
+
+            tc.setTcrmarks(marks);
+            tc.setTcrfacultyid(facultyId);
+            tc.setTcrslot(slot);
+            tc.setTcrlastupdatedat(LocalDateTime.now());
+
+            termCourseRepository.save(tc);
+        }
+
+        redirectAttributes.addFlashAttribute("success", "Term course(s) updated successfully");
+        return "redirect:/admin/term-courses/edit?termId=" + termId;
+    }
+
+    // DELETE TERM COURSE (only for electives)
+    @PostMapping("/delete")
+    @Transactional
+    public String deleteTermCourse(
+            @RequestParam("tcrid") Long tcrid,
+            @RequestParam("termId") Long termId,
+            RedirectAttributes redirectAttributes) {
+
+        TermCourses tc = termCourseRepository.findByTcrid(tcrid);
+        if (tc == null) {
+            redirectAttributes.addFlashAttribute("error", "Term course not found");
+            return "redirect:/admin/term-courses/edit?termId=" + termId;
+        }
+
+        // Only allow deletion of electives
+        if (!"ELECTIVE".equalsIgnoreCase(tc.getCrstype())) {
+            redirectAttributes.addFlashAttribute("error", "Only elective courses can be deleted");
+            return "redirect:/admin/term-courses/edit?termId=" + termId;
+        }
+
+        termCourseRepository.deleteByTcrid(tcrid);
+        redirectAttributes.addFlashAttribute("success", "Elective course deleted successfully");
+
+        return "redirect:/admin/term-courses/edit?termId=" + termId;
+    }
+
+    // ADD ELECTIVE
+    @PostMapping("/add-elective")
+    @Transactional
+    public String addElective(
+            @RequestParam("termId") Long termId,
+            @RequestParam("crsid") Long crsid,
+            RedirectAttributes redirectAttributes) {
+
+        // Check if course already exists in this term
+        boolean exists = termCourseRepository.existsByTcrtrmidAndTcrcrsid(termId, crsid);
+        if (exists) {
+            redirectAttributes.addFlashAttribute("error", "This course already exists in this term");
+            return "redirect:/admin/term-courses/edit?termId=" + termId;
+        }
+
+        // Generate new tcrid
+        Long maxTcrid = termCourseRepository.findMaxTcrid();
+        Long newTcrid = (maxTcrid == null ? 0 : maxTcrid) + 1;
+
+        // Create new TermCourse entry
+        TermCourses newTc = new TermCourses();
+        newTc.setTcrid(newTcrid);
+        newTc.setTcrtrmid(termId);
+        newTc.setTcrcrsid(crsid);
+        newTc.setTcrtype("REGULAR");
+        newTc.setTcrroundlogic("ROUND");
+        newTc.setTcrmarks(100L);
+        newTc.setTcrstatus("AVAILABLE");
+        newTc.setTcrcreatedby(0L);
+        newTc.setTcrcreatedat(LocalDateTime.now());
+        newTc.setTcrrowstate(1L);
+        newTc.setCrstype("ELECTIVE");
+
+        termCourseRepository.save(newTc);
+        redirectAttributes.addFlashAttribute("success", "Elective course added successfully");
+
+        return "redirect:/admin/term-courses/edit?termId=" + termId;
     }
 }
