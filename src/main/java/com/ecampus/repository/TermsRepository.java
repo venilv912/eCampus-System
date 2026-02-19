@@ -61,4 +61,7 @@ public interface TermsRepository extends JpaRepository<Terms, Long> {
     
     @Query("SELECT COALESCE(MAX(t.trmid), 0) FROM Terms t")
     Long findMaxTrmid();
+
+    @Query("SELECT t FROM Terms t WHERE t.trmayrid = :ayrid AND t.trmname = :trmname")
+    Terms findByTrmayridAndTrmname(@Param("ayrid") Long ayrid, @Param("trmname") String trmname);
 }

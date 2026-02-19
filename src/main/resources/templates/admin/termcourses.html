@@ -19,6 +19,24 @@
 
     <h2>Term Courses</h2>
 
+    <!-- Flash Messages -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${warning}" class="alert alert-warning alert-dismissible fade show" role="alert">
+        <span th:text="${warning}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${info}" class="alert alert-info alert-dismissible fade show" role="alert">
+        <span th:text="${info}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
     <div th:each="academicYearEntry : ${coursesByAcademicYearThenTerm}">
 
         <h3 class="mt-5" th:text="'Academic Year: ' + ${academicYearEntry.key}"></h3>
@@ -27,15 +45,20 @@
 
             <table class="table table-bordered mt-3">
                 <thead class="table-light">
-                <!-- Term row -->
+                <!-- Term row with buttons -->
                 <tr>
-                    <th colspan="3"
-                        th:text="${termEntry.key}"
-                        style="
-                            text-align:center;
-                            background-color:#e9ecef;
-                            font-weight:bold;
-                            ">
+                    <th colspan="3" style="background-color:#e9ecef;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span th:text="${termEntry.key}" style="font-weight:bold;"></span>
+                            <div>
+                                <form th:action="@{/admin/term-courses/pull-electives}" method="post" style="display:inline;">
+                                    <input type="hidden" name="termId" th:value="${termIdMap[academicYearEntry.key][termEntry.key]}" />
+                                    <button type="submit" class="btn btn-sm btn-outline-primary me-2">Pull Electives</button>
+                                </form>
+                                <a th:href="@{/admin/term-courses/edit(termId=${termIdMap[academicYearEntry.key][termEntry.key]})}" 
+                                   class="btn btn-sm btn-outline-secondary">Edit Term Courses</a>
+                            </div>
+                        </div>
                     </th>
                 </tr>
 

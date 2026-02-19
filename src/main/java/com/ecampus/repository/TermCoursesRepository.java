@@ -181,4 +181,6 @@ public interface TermCoursesRepository extends JpaRepository<TermCourses, Long> 
             nativeQuery = true)
     List<Object[]> countStudentsForTermCourses(@Param("tcrids") List<Long> tcrids);
 
+    List<TermCourses> findByTcrtrmidAndCrstype(Long tcrtrmid, String crstype);
+
 }

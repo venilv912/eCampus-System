@@ -307,34 +307,4 @@ public class TermsController {
         return "admin/terms";
     }
 
-    // LIST TERM COURSES (DESC ORDER BY termId, then courseCode)
-    @GetMapping("/termcourses")
-    public String listTermCourses(Model model) {
-        List<Object[]> rows = termCourseRepository.getAllTermCoursesDetailsRaw();
-
-        List<TermCoursesViewDTO> termcourses = rows.stream()
-                .map(r -> new TermCoursesViewDTO(
-                        (String) r[0],
-                        (String) r[1],
-                        (String) r[2],
-                        (String) r[3],
-                        (String) r[4]
-                )).toList();
-
-        Map<String, Map<String, List<TermCoursesViewDTO>>> coursesByAcademicYearThenTerm =
-                termcourses.stream()
-                        .collect(Collectors.groupingBy(
-                                TermCoursesViewDTO::ayrname,
-                                LinkedHashMap::new,
-                                Collectors.groupingBy(
-                                        TermCoursesViewDTO::term,
-                                        LinkedHashMap::new,
-                                        Collectors.toList()
-                                )
-                        ));
-
-        model.addAttribute("coursesByAcademicYearThenTerm", coursesByAcademicYearThenTerm);
-        return "admin/termcourses";
-    }
-
 }

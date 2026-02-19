@@ -41,11 +41,13 @@ public interface SemestersRepository extends JpaRepository<Semesters, Long> {
     List<Semesters> findByBatches_BchidAndStrrowstateGreaterThanOrderByStrseqnoAsc(Long bchId, int rowState);
 
     @Query(value = """
-            SELECT s.strid AS strid, CONCAT(p.prgname, ' - ', b.bchname) AS batch, CONCAT(t.trmname, ' (', a.ayrname, ')') AS term, s.strname AS semester FROM ec2.semesters AS s
+            SELECT s.strid AS strid, CONCAT(COALESCE(sd.spldesc, p.prgname), ' - ', b.bchname) AS batch, CONCAT(t.trmname, ' (', a.ayrname, ')') AS term, s.strname AS semester FROM ec2.semesters AS s
             JOIN ec2.batches AS b
             ON s.strbchid=b.bchid
             JOIN ec2.programs AS p
             ON b.bchprgid=p.prgid
+			LEFT JOIN ec2.schemedetails as sd
+			ON b.scheme_id=sd.scheme_id AND b.splid=sd.splid
             JOIN ec2.terms AS t
             ON s.strtrmid=t.trmid
             JOIN ec2.academicyears AS a
