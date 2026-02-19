@@ -17,7 +17,14 @@
 
 <div class="container mt-3">
 
-    <h2 class="mb-4">Add New Batch</h2>
+    <div class="d-flex align-items-center mb-4">
+        <h2 class="me-3 mb-0">Add New Batch</h2>
+
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show mb-0" role="alert" id="flashMessage">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
 
     <div class="card shadow-sm">
         <div class="card-body">
@@ -27,7 +34,7 @@
                 <!-- Program dropdown -->
                 <div class="mb-3">
                     <label class="form-label">Program</label>
-                    <select class="form-select" th:field="*{bchprgid}" required>
+                    <select class="form-select" th:field="*{bchprgid}" id="programSelect" required>
                         <option value="">-- Select Program --</option>
                         <option th:each="p : ${programs}"
                                 th:value="${p.prgid}"
@@ -39,12 +46,16 @@
                 <!-- Scheme dropdown -->
                 <div class="mb-3">
                     <label class="form-label">Scheme</label>
-                    <select class="form-select" th:field="*{schemeId}" required>
+                    <select class="form-select" th:field="*{schemeId}" id="schemeSelect" required disabled>
                         <option value="">-- Select Scheme --</option>
-                        <option th:each="scheme : ${schemes}"
-                                th:value="${scheme.id}"
-                                th:text="'Scheme ' + ${scheme.id}">
-                        </option>
+                    </select>
+                </div>
+
+                <!-- Specialization dropdown -->
+                <div class="mb-3">
+                    <label class="form-label">Specialization</label>
+                    <select class="form-select" th:field="*{splid}" id="specializationSelect" required disabled>
+                        <option value="">-- Select Specialization --</option>
                     </select>
                 </div>
 
@@ -62,7 +73,7 @@
 
                 <!-- Batch Name -->
                 <div class="mb-3">
-                    <label class="form-label">Batch Name</label>
+                    <label class="form-label">Batch Name (Year)</label>
                     <input type="text" class="form-control"
                            th:field="*{bchname}"
                            placeholder="Enter batch Name" required/>
@@ -90,6 +101,73 @@
 <div th:replace="fragments/footer :: footer"></div>
 
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const programSelect = document.getElementById('programSelect');
+        const schemeSelect = document.getElementById('schemeSelect');
+        const specializationSelect = document.getElementById('specializationSelect');
+        
+        // When program changes, load schemes
+        programSelect.addEventListener('change', function() {
+            const programId = this.value;
+            
+            // Reset dependent dropdowns
+            schemeSelect.innerHTML = '<option value="">-- Select Scheme --</option>';
+            schemeSelect.disabled = true;
+            specializationSelect.innerHTML = '<option value="">-- Select Specialization --</option>';
+            specializationSelect.disabled = true;
+            
+            if (programId) {
+                fetch('/admin/batches/api/schemes/' + programId)
+                    .then(response => response.json())
+                    .then(schemes => {
+                        schemes.forEach(scheme => {
+                            const option = document.createElement('option');
+                            option.value = scheme.id;
+                            option.textContent = 'Scheme ' + scheme.id;
+                            schemeSelect.appendChild(option);
+                        });
+                        schemeSelect.disabled = false;
+                    })
+                    .catch(error => console.error('Error loading schemes:', error));
+            }
+        });
+        
+        // When scheme changes, load specializations
+        schemeSelect.addEventListener('change', function() {
+            const schemeId = this.value;
+            
+            // Reset specialization dropdown
+            specializationSelect.innerHTML = '<option value="">-- Select Specialization --</option>';
+            specializationSelect.disabled = true;
+            
+            if (schemeId) {
+                fetch('/admin/batches/api/specializations/' + schemeId)
+                    .then(response => response.json())
+                    .then(specializations => {
+                        specializations.forEach(spec => {
+                            const option = document.createElement('option');
+                            option.value = spec.splid;
+                            option.textContent = spec.spldesc;
+                            specializationSelect.appendChild(option);
+                        });
+                        specializationSelect.disabled = false;
+                    })
+                    .catch(error => console.error('Error loading specializations:', error));
+            }
+        });
+        
+        // Auto-dismiss flash message after 5 seconds
+        setTimeout(() => {
+            const alertElement = document.getElementById('flashMessage');
+            if (alertElement) {
+                const alert = bootstrap.Alert.getOrCreateInstance(alertElement);
+                alert.close();
+            }
+        }, 5000);
+    });
+</script>
 
 </body>
 </html>

@@ -57,7 +57,7 @@ public class TermCourses {
     private Long tcrslot;
 
     @Column(name = "crstype")
-    private String crstype;
+    private String crstype; // Course Type ("Core", "Elective", "IP") (IP=Internship/Project)
 
     @ManyToOne
     @JoinColumn(name = "tcrcrsid", referencedColumnName = "crsid", insertable = false, updatable = false)

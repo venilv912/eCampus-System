@@ -15,7 +15,7 @@ public class SemesterCourses {
     private Long scrstrid;
 
     @Column(name = "crstype")
-    private String crstype;
+    private String crstype; // Course Type ("Core", "Elective", "IP") (IP=Internship/Project)
 
     @Column(name = "scrcrsid")
     private Long scrcrsid;

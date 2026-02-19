@@ -1,5 +1,6 @@
 package com.ecampus.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,6 +13,7 @@ public class Scheme {
 
     @ManyToOne
     @JoinColumn(name = "program_id", nullable = false)
+    @JsonIgnore
     private Programs program;
 
     @Column(name = "effective_from_year", nullable = false)

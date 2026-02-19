@@ -32,6 +32,7 @@
             <th style="background-color: #003366; color: white;">Batch</th>
             <th style="background-color: #003366; color: white;">Scheme</th>
             <th style="background-color: #003366; color: white;">Capacity</th>
+            <th style="background-color: #003366; color: white;">Actions</th>
         </tr>
         </thead>
 
@@ -39,10 +40,13 @@
         <tr th:each="b : ${batches}">
             <td th:text="${b.bchid}"></td>
             <td th:text="${b.ayrname}"></td>
-            <td th:text="${b.prgname}"></td>
+            <td th:text="${b.spldesc}"></td>
             <td th:text="${b.bchname}"></td>
             <td th:text="${b.schemeyear}"></td>
             <td th:text="${b.bchcapacity}"></td>
+            <td>
+                <a th:href="@{/admin/batches/edit/{id}(id=${b.bchid})}" class="btn btn-warning btn-sm">Edit</a>
+            </td>
         </tr>
         </tbody>
     </table>
