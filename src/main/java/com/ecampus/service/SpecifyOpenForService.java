@@ -7,8 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ecampus.model.AcademicYears;
-import com.ecampus.model.TermCourseAvailableFor;
+import com.ecampus.model.*;
 import com.ecampus.repository.*;
 @Service
 public class SpecifyOpenForService {
@@ -68,12 +67,7 @@ public class SpecifyOpenForService {
             TCAFor.setTcalastupdatedat(null);
             TCAFor.setTcarowstate(1L);
             TCAFor.setTcabchid(BatchId);
-            if(TermCoursesRepo.getiscoreById(tcid) == "Y"){
-                TCAFor.setTcaelectivetype("CORE");
-            }
-            else{
-                TCAFor.setTcaelectivetype(null);
-            }
+            TCAFor.setTcaelectivetype(null);
             TCAFor.setTca_seats(0L);
             TCAFor.setTca_booked(0L);
 

@@ -11,13 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.ecampus.model.SchemeDetails;
-import com.ecampus.model.TermCourseAvailableFor;
+import com.ecampus.model.*;
 import com.ecampus.repository.*;
 import com.ecampus.service.SpecifyOpenForService;
 
@@ -78,7 +79,7 @@ public class SpecifyOpenForController {
         return "admin/openfor :: coursesSection"; 
     }
 
-    @GetMapping("/chooseElective")
+    @PostMapping("/chooseElective")
     public String chooseElective(@RequestParam String batch,
                                  @RequestParam String program,
                                  @RequestParam Long termId,
@@ -112,19 +113,24 @@ public class SpecifyOpenForController {
                                @RequestParam Long termId,
                                @RequestParam String electiveCode,
                                @RequestParam(value = "selectedTcaIds", required = false) List<Long> selectedTcaIds,
-                               Model model) {
+                               RedirectAttributes redirectAttributes) {
         
         if (selectedTcaIds != null) {
             OpenForService.updateElectiveType(selectedTcaIds, electiveCode);
         }
 
-        // Return to the main page. 
-        // We use a redirect to a new GET method that reloads the specific state
-        return "redirect:/admin/openfor/reload?batch=" + batch + "&program=" + program + "&termId=" + termId;
+        redirectAttributes.addFlashAttribute("batch", batch);
+        redirectAttributes.addFlashAttribute("program", program);
+        redirectAttributes.addFlashAttribute("termId", termId);
+        
+        return "redirect:/admin/openfor/reload";
     }
 
     @GetMapping("/reload")
-    public String reloadPage(@RequestParam String batch, @RequestParam String program, @RequestParam Long termId, Model model) {
+    public String reloadPage(@ModelAttribute("batch") String batch,
+                             @ModelAttribute("program") String program,
+                             @ModelAttribute("termId") Long termId,
+                             Model model) {
         // Re-setup initial dropdowns
         Long currTermId = TermRepo.findMaxTrmid();
         List<String> programs = SchemeDetailsRepo.findProgramsByTrm(currTermId);
@@ -146,6 +152,19 @@ public class SpecifyOpenForController {
         return "admin/openfor";
     }
 
+    @PostMapping("/reload")
+    public String reloadPost(String batch,
+                             String program,
+                             Long termId,
+                             RedirectAttributes redirectAttributes) {
+                                
+        redirectAttributes.addFlashAttribute("batch", batch);
+        redirectAttributes.addFlashAttribute("program", program);
+        redirectAttributes.addFlashAttribute("termId", termId);
+
+        return "redirect:/admin/openfor/reload";
+    }
+
     @PostMapping("/updateSeats")
     public String updateSeats(@RequestParam Long tcaId,
                               @RequestParam Long seats,
@@ -154,7 +173,7 @@ public class SpecifyOpenForController {
                               @RequestParam Long termId,
                               Model model) {
         
-        // Call service to update seats (You'll need to add this method to your Service)
+        // Call service to update seats
         OpenForService.updateTcaSeats(tcaId, seats);
         
         // Standard fragment refresh logic

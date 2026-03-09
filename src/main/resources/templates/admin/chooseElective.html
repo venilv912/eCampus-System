@@ -52,7 +52,11 @@
                     </table>
 
                     <div class="d-flex justify-content-between mt-4">
-                        <a th:href="@{/admin/openfor/reload(batch=${batch}, program=${program}, termId=${termId})}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit"
+                                formaction="/admin/openfor/reload"
+                                class="btn btn-secondary">
+                            Cancel
+                        </button>
                         <button type="submit" class="btn btn-primary">Add Selected Courses</button>
                     </div>
                 </form>

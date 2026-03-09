@@ -22,7 +22,7 @@ public interface CourseTypesRepository extends JpaRepository<CourseTypes, Long> 
 //    // CourseRequirement findBySchemeIdAndCourseTypeCode(Long schemeId, String courseTypeCode);
 //    // List<CourseRequirement> findByProgramIdAndSchemeId(Long programId, Long schemeId);
 
-    @Query(value = "SELECT DISTINCT ct.ctpcode AS code, ct.ctpname AS name FROM ec2.coursetypes ct WHERE ct.ctpcode IN (SELECT DISTINCT sc.ctpcode FROM ec2.schemecourses sc WHERE sc.scheme_id = :scheme_id AND sc.splid = :splid AND sc.sem_no <= :sem_no AND sc.crsid IS NULL)", nativeQuery = true)
+    @Query(value = "SELECT DISTINCT ct.ctpcode AS code, ct.ctpname AS name FROM ec2.coursetypes ct WHERE ct.crscat='ELECTIVE' AND ct.ctpid IN (SELECT DISTINCT sc.ctpid FROM ec2.schemecourses sc WHERE sc.scheme_id = :scheme_id AND sc.splid = :splid AND sc.sem_no <= :sem_no AND sc.crsid IS NULL)", nativeQuery = true)
     List<Object[]> getElectiveTypeBySchSplSem(@Param("scheme_id") Long scheme_id, @Param("splid") Long splid, @Param("sem_no") Long sem_no);
 
     @Query("SELECT COALESCE(MAX(c.ctpid), 0) FROM CourseTypes c")

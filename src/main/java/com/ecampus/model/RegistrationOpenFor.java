@@ -1,6 +1,5 @@
 package com.ecampus.model;
 
-import com.ecampus.model.RegistrationOpenForId;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
