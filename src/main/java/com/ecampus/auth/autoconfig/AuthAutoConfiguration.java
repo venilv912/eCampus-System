@@ -49,7 +49,7 @@ public class AuthAutoConfiguration {
 
         http.authorizeHttpRequests(auth -> {
             // Permit internal and error paths
-            auth.requestMatchers("/","/login", "/error", "/h2-console/**").permitAll();
+            auth.requestMatchers("/","/forgot-password/**","/login", "/error", "/h2-console/**").permitAll();
 
             // Allow static resources
             auth.requestMatchers("/css/**", "/js/**", "/images/**").permitAll();
