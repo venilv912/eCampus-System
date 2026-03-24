@@ -14,6 +14,7 @@ import com.ecampus.dto.CourseConversionTypeGroupDTO;
 import com.ecampus.dto.CourseTypeProgressDTO;
 import com.ecampus.dto.CourseTypeOptionDTO;
 import com.ecampus.dto.OverallCourseTypeProgressDTO;
+import com.ecampus.dto.StudentGraduationRequirementsAdminDTO;
 import com.ecampus.model.*;
 import com.ecampus.repository.*;
 
@@ -55,6 +56,12 @@ public class StudentGraduationRequirementsService {
 
     @Autowired
     private CourseTypeConversionRepository courseTypeConversionRepo;
+
+    @Autowired
+    private SchemeDetailsRepository schemeDetailsRepo;
+
+    @Autowired
+    private StudentSemesterResultRepository studentSemesterResultRepo;
 
     /**
      * Returns the stdid for the logged-in user.
@@ -582,6 +589,174 @@ public class StudentGraduationRequirementsService {
                                           Map<Long, BigDecimal> completedCredits) {
         private static CompletedCourseMetrics empty() {
             return new CompletedCourseMetrics(Collections.emptyMap(), Collections.emptyMap());
+        }
+    }
+
+    /**
+     * Builds graduation requirements summary for all students in a batch.
+     * Returns a list of StudentGraduationRequirementsAdminDTO sorted by stdinstid.
+     */
+    public List<StudentGraduationRequirementsAdminDTO> buildBatchGraduationRequirements(
+            Long batchId, Long schemeId, Long splid) {
+        
+        // 1. Get all students in the batch
+        Batches batch = batchesRepo.findById(batchId)
+                .orElseThrow(() -> new IllegalArgumentException("Batch not found: " + batchId));
+        
+        List<Students> students = studentsRepo.findByBatch(batch).stream()
+                .filter(s -> s.getStdrowstate() > 0)
+                .sorted((s1, s2) -> {
+                    String id1 = s1.getStdinstid() != null ? s1.getStdinstid() : "";
+                    String id2 = s2.getStdinstid() != null ? s2.getStdinstid() : "";
+                    return id1.compareTo(id2);
+                })
+                .toList();
+        
+        // 2. Get scheme details for min CPI and other requirements
+        SchemeDetails schemeDetails = null;
+        if (splid != null && splid > 0) {
+            schemeDetails = schemeDetailsRepo.findBySchemeIdAndSplid(schemeId, splid).orElse(null);
+        }
+        if (schemeDetails == null) {
+            schemeDetails = schemeDetailsRepo.findBySchemeIdAndSplid(schemeId, 0L).orElse(null);
+        }
+        
+        BigDecimal minCpi = schemeDetails != null && schemeDetails.getSplMinCpi() != null
+                ? schemeDetails.getSplMinCpi()
+                : BigDecimal.ZERO;
+        
+        // 3. Get all course types for total types count
+        List<Long> applicableSplids = getApplicableSplids(splid);
+        List<CourseTypes> courseTypes = courseTypesRepo.findBySchemeIdAndSplidIn(schemeId, applicableSplids);
+        long totalTypes = courseTypes.size();
+        
+        // Calculate total min courses and credits across all types
+        long totalMinCourses = courseTypes.stream()
+                .mapToLong(ct -> safeLong(ct.getMinCourses()))
+                .sum();
+        BigDecimal totalMinCredits = courseTypes.stream()
+                .map(ct -> BigDecimal.valueOf(safeLong(ct.getMinCredits())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        
+        // 4. Build DTO for each student
+        List<StudentGraduationRequirementsAdminDTO> results = new ArrayList<>();
+        
+        for (Students student : students) {
+            // Get overall progress for this student
+            List<OverallCourseTypeProgressDTO> progressList = buildOverallProgress(
+                    student.getStdid(), schemeId, splid);
+            
+            // Aggregate totals
+            long totalCompleted = progressList.stream()
+                    .mapToLong(OverallCourseTypeProgressDTO::getCompletedCourses)
+                    .sum();
+            long totalExtra = progressList.stream()
+                    .mapToLong(OverallCourseTypeProgressDTO::getExtraCourses)
+                    .sum();
+            long coursesCompleted = totalCompleted - totalExtra;
+            
+            BigDecimal creditsEarned = progressList.stream()
+                    .map(OverallCourseTypeProgressDTO::getCompletedCredits)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            BigDecimal extraCredits = progressList.stream()
+                    .map(OverallCourseTypeProgressDTO::getExtraCredits)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            creditsEarned = creditsEarned.subtract(extraCredits);
+            // Normalize scale (remove trailing zeros)
+            creditsEarned = creditsEarned.stripTrailingZeros();
+            
+            // Count types fulfilled
+            long typesFulfilled = progressList.stream()
+                    .filter(p -> p.isCourseRequirementMet() && p.isCreditRequirementMet())
+                    .count();
+            
+            // Get student's CPI
+            // Get student's CPI (still coming as String from DB)
+            String rawCpi = studentSemesterResultRepo.getcpi(student.getStdid());
+
+            // Convert to BigDecimal (null if invalid)
+            BigDecimal studentCpi = parseCpi(rawCpi);
+            
+            // Determine graduation status
+            boolean courseRequirementMet = coursesCompleted >= totalMinCourses;
+            boolean creditRequirementMet = creditsEarned.compareTo(totalMinCredits) >= 0;
+            boolean typesRequirementMet = typesFulfilled >= totalTypes;
+            boolean cpiRequirementMet = studentCpi.compareTo(minCpi) >= 0;
+            
+            boolean isCompleted = courseRequirementMet && creditRequirementMet && 
+                                 typesRequirementMet && cpiRequirementMet;
+            
+            String status = isCompleted ? "Completed" : "Incomplete";
+            String statusColor = isCompleted ? "success" : "warning";
+            
+            // Build student name
+            String studentName = buildStudentFullName(student);
+            
+            results.add(new com.ecampus.dto.StudentGraduationRequirementsAdminDTO(
+                    student.getStdid(),
+                    student.getStdinstid(),
+                    studentName,
+                    coursesCompleted,
+                    totalMinCourses,
+                    creditsEarned,
+                    totalMinCredits,
+                    typesFulfilled,
+                    totalTypes,
+                    studentCpi,
+                    minCpi,
+                    status,
+                    statusColor
+            ));
+        }
+        
+        return results;
+    }
+
+    /**
+     * Builds full student name from available fields: firstname [middlename] lastname
+     */
+    private String buildStudentFullName(Students student) {
+        StringBuilder name = new StringBuilder();
+        if (student.getStdfirstname() != null && !student.getStdfirstname().isBlank()) {
+            name.append(student.getStdfirstname());
+        }
+        if (student.getStdmiddlename() != null && !student.getStdmiddlename().isBlank()) {
+            if (name.length() > 0) name.append(" ");
+            name.append(student.getStdmiddlename());
+        }
+        if (student.getStdlastname() != null && !student.getStdlastname().isBlank()) {
+            if (name.length() > 0) name.append(" ");
+            name.append(student.getStdlastname());
+        }
+        return name.toString();
+    }
+
+    /**
+     * Parses CPI safely from DB value.
+     * Returns null if CPI is invalid, missing, or non-numeric.
+     */
+    private BigDecimal parseCpi(String cpiStr) {
+        if (cpiStr == null) {
+            return new BigDecimal(0);
+        }
+
+        cpiStr = cpiStr.trim();
+
+        if (cpiStr.isEmpty() || cpiStr.equals("--")) {
+            return new BigDecimal(0);
+        }
+
+        if (!cpiStr.matches("\\d+(\\.\\d+)?")) {
+            return new BigDecimal(0);
+        }
+
+        // Normalize comma decimal (if your DB might contain it)
+        cpiStr = cpiStr.replace(",", ".");
+
+        try {
+            return new BigDecimal(cpiStr);
+        } catch (NumberFormatException e) {
+            return new BigDecimal(0);
         }
     }
 }

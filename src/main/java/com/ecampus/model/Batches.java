@@ -9,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
@@ -70,12 +71,12 @@ public class Batches {
     @Column(name = "splid")
     private Long splid;
 
-    //    @ManyToOne
-//    @JoinColumns({
-//            @JoinColumn(name = "scheme_id", referencedColumnName = "scheme_id", insertable = false, updatable = false),
-//            @JoinColumn(name = "splid", referencedColumnName = "splid", insertable = false, updatable = false)
-//    })
-//    private SchemeDetails schemeDetails;
+    @ManyToOne
+    @JoinColumns({
+           @JoinColumn(name = "scheme_id", referencedColumnName = "scheme_id", insertable = false, updatable = false),
+           @JoinColumn(name = "splid", referencedColumnName = "splid", insertable = false, updatable = false)
+    })
+    private SchemeDetails schemeDetails;
 
     public Long getBchid() { return bchid; }
     public void setBchid(Long bchid) { this.bchid = bchid; }
@@ -118,4 +119,7 @@ public class Batches {
 
     public Long getSplid() { return splid; }
     public void setSplid(Long splid) { this.splid = splid; }
+
+    public SchemeDetails getSchemeDetails() {return schemeDetails;}
+    public void setSchemeDetails(SchemeDetails schemeDetails) {this.schemeDetails = schemeDetails;}
 }
