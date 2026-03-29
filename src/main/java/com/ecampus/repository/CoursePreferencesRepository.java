@@ -25,4 +25,7 @@ public interface CoursePreferencesRepository extends JpaRepository<CoursePrefere
     @Query(value = "SELECT * FROM ec2.coursepreferences crspref WHERE crspref.SID = :sid", nativeQuery = true)
     List<CoursePreferences> getBySid(@Param("sid") Long sid);
 
+    @Query(value = "SELECT st.stdinstid, cp.slot, crs.crscode, cp.pref_index FROM ec2.students st RIGHT JOIN ec2.coursepreferences cp ON st.stdid = cp.sid LEFT JOIN ec2.termcourses tc ON cp.tcrid = tc.tcrid LEFT JOIN ec2.courses crs ON tc.tcrcrsid = crs.crsid", nativeQuery = true)
+    List<Object[]> getCrsPrefForElectiveRegistration();
+
 }

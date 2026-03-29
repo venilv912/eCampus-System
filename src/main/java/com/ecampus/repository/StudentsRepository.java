@@ -64,4 +64,19 @@ public interface StudentsRepository extends JpaRepository<Students, Long> {
 
     // Derived query by batch
     List<Students> findByBatch(Batches batches);
+
+    @Query(value = "SELECT s.stdinstid, " +
+                "CONCAT(s.stdfirstname, ' ', s.stdmiddlename, ' ', s.stdlastname), " +
+                "sd.splname, " +
+                "sem.strname " +
+                "FROM ec2.students s " +
+                "JOIN ec2.batches b ON s.stdbchid = b.bchid " +
+                "JOIN ec2.schemedetails sd ON b.scheme_id = sd.scheme_id AND b.splid = sd.splid " +
+                "JOIN ec2.semesters sem ON b.bchid = sem.strbchid " +
+                "WHERE b.bchname = :bchname " +
+                "AND sd.splname = :splname " +
+                "AND sem.strtrmid = :termId", nativeQuery = true)
+        List<Object[]> findStudentRegistrationDetails(@Param("bchname") String bchname, 
+                                                @Param("splname") String splname, 
+                                                @Param("termId") Long termId);
 }

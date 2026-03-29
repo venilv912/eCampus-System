@@ -25,4 +25,7 @@ public interface SlotPreferencesRepository extends JpaRepository<SlotPreferences
     @Query(value = "SELECT slotPref.slot as slot, slotPref.pref_index as index FROM ec2.slotpreferences slotPref WHERE slotPref.SID = :sid", nativeQuery = true)
     List<Object[]> getBySid(@Param("sid") Long sid);
 
+    @Query(value = "SELECT st.stdinstid, sp.slot, sp.pref_index FROM ec2.students st RIGHT JOIN ec2.slotpreferences sp ON st.stdid = sp.sid", nativeQuery = true)
+    List<Object[]> getSlotPrefForElectiveRegistration();
+
 }

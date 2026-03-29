@@ -197,4 +197,11 @@ public interface TermCoursesRepository extends JpaRepository<TermCourses, Long> 
        "AND tca.tcaelectivetype IS NOT NULL", nativeQuery = true)
     List<Object[]> findCoursesBySlot(@Param("trmid") Long trmid, @Param("crstype") String crstype, @Param("bchid") Long bchid);
 
+    @Query(value = "SELECT c.crscode, c.crsname, c.crscreditpoints, tc.tcrslot " +
+                "FROM ec2.termcourses tc " +
+                "JOIN ec2.courses c ON tc.tcrcrsid = c.crsid " +
+                "WHERE tc.tcrtrmid = :termId " +
+                "AND tc.crstype = 'ELECTIVE' AND tc.tcrslot IS NOT NULL", nativeQuery = true)
+    List<Object[]> findElectiveCoursesByTerm(@Param("termId") Long termId);
+
 }
