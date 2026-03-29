@@ -19,6 +19,9 @@ public interface SchemeDetailsRepository extends JpaRepository<SchemeDetails, Sc
     @Query(value = "SELECT DISTINCT sd.splname FROM ec2.batches b JOIN ec2.schemedetails sd ON b.scheme_id = sd.scheme_id AND b.splid = sd.splid WHERE b.bchid IN (SELECT DISTINCT sm.strbchid FROM ec2.semesters sm WHERE sm.strtrmid = :trmid) ORDER BY sd.splname;", nativeQuery = true)
     List<String> findProgramsByTrm(@Param("trmid") Long trmid);
 
+    @Query(value = "SELECT DISTINCT sd.splname FROM ec2.batches b JOIN ec2.schemedetails sd ON b.scheme_id = sd.scheme_id AND b.splid = sd.splid WHERE sd.splid = 0 AND b.bchid IN (SELECT DISTINCT sm.strbchid FROM ec2.semesters sm WHERE sm.strtrmid = :trmid) ORDER BY sd.splname;", nativeQuery = true)
+    List<String> findMainProgramsByTrm(@Param("trmid") Long trmid);
+
     @Query(value = "SELECT scmdet.scheme_id FROM ec2.schemedetails scmdet WHERE scmdet.splname = :splname", nativeQuery = true)
     Long getSchIdFromSpl(@Param("splname") String splname);
 

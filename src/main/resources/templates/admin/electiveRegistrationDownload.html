@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Download Elective Registration</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <style>
+        /* Ensures the card sits in the middle of the viewport height */
+        .main-container {
+            min-height: 80vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .download-card {
+            width: 100%;
+            max-width: 500px;
+        }
+    </style>
+</head>
+
+
+<body>
+
+<!-- HEADER -->
+<div th:replace="fragments/header :: header"></div>
+
+<!-- NAVBAR -->
+<div th:replace="fragments/navbar :: navbar"></div>
+
+    
+    <div class="container main-container">
+        <div class="card shadow-lg download-card">
+            <div class="card-header bg-primary text-white text-center">
+                <h4 class="mb-0">Registration Data Export</h4>
+            </div>
+            <div class="card-body p-4">
+                <input type="hidden" id="currTermId" th:value="${currTermId}">
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Select Program</label>
+                    <select id="programSelect" class="form-select form-select-lg" onchange="fetchBatches()">
+                        <option value="">-- Select Program --</option>
+                        <option th:each="p : ${programs}" th:value="${p}" th:text="${p}"></option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Select Batch</label>
+                    <select id="batchSelect" class="form-select form-select-lg" disabled>
+                        <option value="">-- Choose Program First --</option>
+                    </select>
+                </div>
+
+                <div class="d-grid">
+                    <button type="button" class="btn btn-success btn-lg" onclick="downloadExcel()">
+                        <i class="bi bi-file-earmark-excel"></i> Download Excel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        function fetchBatches() {
+            const programId = document.getElementById("programSelect").value;
+            const batchSelect = document.getElementById("batchSelect");
+
+            if (!programId) {
+                batchSelect.innerHTML = '<option value="">-- Choose Program First --</option>';
+                batchSelect.disabled = true;
+                return;
+            }
+
+            // Call the background function to get batches
+            fetch(`/admin/electiveRegistrationDownload/getBatches?prgname=${programId}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Batches received from server:", data);
+                    batchSelect.innerHTML = '<option value="">-- Select Batch --</option>';
+                    data.forEach(batch => {
+                        let opt = document.createElement("option");
+                        opt.value = batch;
+                        opt.text = batch;
+                        batchSelect.add(opt);
+                    });
+                    batchSelect.disabled = false;
+                });
+        }
+
+        function downloadExcel() {
+            const program = document.getElementById("programSelect").value;
+            const batch = document.getElementById("batchSelect").value;
+            const termId = document.getElementById("currTermId").value;
+
+            if (!program || !batch) {
+                alert("Please select both a Program and a Batch before downloading.");
+                return;
+            }
+
+            // Construct the URL with parameters for the controller
+            const url = `/admin/electiveRegistrationDownload/giveExcel?program=${encodeURIComponent(program)}&batch=${encodeURIComponent(batch)}&termId=${termId}`;
+            
+            // Trigger download
+            window.location.href = url;
+        }
+    </script>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>
