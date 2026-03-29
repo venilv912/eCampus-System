@@ -41,7 +41,6 @@ public class SpecifyOpenForController {
     @GetMapping
     public String bchAndprg(Model model){
 
-        // Finding the batches for the new Term to display in the dropdown
         Long currTermId = TermRepo.findMaxTrmid();
         List<String> programs = SchemeDetailsRepo.findProgramsByTrm(currTermId);
 

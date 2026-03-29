@@ -28,4 +28,7 @@ public interface StudentCourseRequirementsRepository extends JpaRepository<Stude
     @Query(value = "SELECT scr.elect_type as elecType, scr.count as count FROM ec2.studentcourserequirements scr WHERE scr.SID = :sid", nativeQuery = true)
     List<Object[]> getBySid(@Param("sid") Long sid);
 
+    @Query(value = "SELECT st.stdinstid, scr.elect_type, scr.count FROM ec2.students st RIGHT JOIN ec2.studentcourserequirements scr ON st.stdid = scr.sid", nativeQuery = true)
+    List<Object[]> getStudReqForElectiveRegistration();
+
 }
