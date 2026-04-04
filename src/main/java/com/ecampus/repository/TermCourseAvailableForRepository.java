@@ -5,8 +5,10 @@ import com.ecampus.model.TermCourseAvailableFor;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface TermCourseAvailableForRepository extends JpaRepository<TermCourseAvailableFor, Long> {
 
@@ -39,5 +41,17 @@ public interface TermCourseAvailableForRepository extends JpaRepository<TermCour
 
     @Query(value = "select crs.crscode,sum(tca.tca_seats-tca.tca_booked) from ec2.termcourseavailablefor tca join ec2.termcourses tc on tca.tcatcrid=tc.tcrid join ec2.courses crs on tc.tcrcrsid=crs.crsid where tc.tcrtrmid=78 and tca.tcaelectivetype is not null and tc.tcrslot is not null group by tca.tcatcrid,crs.crscode", nativeQuery = true)
     List<Object[]> getForAddDrop();
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE TermCourseAvailableFor t SET t.tca_booked = t.tca_booked + 1 " + 
+        "WHERE t.tcatcrid = :tcrid AND t.tcabchid = :bchid")
+    void incrementBookedCount(@Param("tcrid") Long tcrid, @Param("bchid") Long bchid);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE TermCourseAvailableFor t SET t.tca_booked = t.tca_booked - 1 " + 
+        "WHERE t.tcatcrid = :tcrid AND t.tcabchid = :bchid")
+    void decrementBookedCount(@Param("tcrid") Long tcrid, @Param("bchid") Long bchid);
     
 }

@@ -22,4 +22,7 @@ public interface StudentRegistrationCoursesRepository extends JpaRepository<Stud
 
     @Query(value = "select src.srctcrid from ec2.studentregistrationcourses src join ec2.coursetypes ct on src.orig_ctpid=ct.ctpid where src.srcsrgid=:srgid and ct.crscat='ELECTIVE'", nativeQuery = true)
     List<Long> findElectivesForStud(@Param("srgid") Long srgid);
+
+    @Query(value = "select * from ec2.studentregistrationcourses src where src.srcsrgid=:srgid and src.srctcrid=:tcrid", nativeQuery = true)
+    StudentRegistrationCourses findBySrgidTcrid(@Param("srgid") Long srgid, @Param("tcrid") Long tcrid);
 }
