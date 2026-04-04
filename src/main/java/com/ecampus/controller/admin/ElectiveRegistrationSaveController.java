@@ -71,8 +71,8 @@ public class ElectiveRegistrationSaveController {
                 Cell cell2 = row.getCell(4);
 
                 // Use the formatter to get the text exactly as it looks in Excel
-                String stdinstid = formatter.formatCellValue(cell1);;
-                String crscode = formatter.formatCellValue(cell2);;
+                String stdinstid = formatter.formatCellValue(cell1);
+                String crscode = formatter.formatCellValue(cell2);
                 
                 Long stdid = studRepo.findStdid(stdinstid);
                 Long bchid = studRepo.findBatchIdByStudentId(stdinstid);
@@ -85,8 +85,7 @@ public class ElectiveRegistrationSaveController {
                 Long tcrid = ((Number) value[0]).longValue();
                 Long ctpid = ((Number) value[1]).longValue();
 
-                TermCourseAvailableFor tca = termCrsAvailableForRepo.findByTcridAndBchid(tcrid, bchid);
-                tca.setTca_booked(tca.getTca_booked()+1);
+                termCrsAvailableForRepo.incrementBookedCount(tcrid,bchid);
 
                 Long srcid = studRegCrsRepo.findMaxSrcId();
                 StudentRegistrationCourses src = new StudentRegistrationCourses();

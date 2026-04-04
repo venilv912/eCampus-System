@@ -35,7 +35,7 @@
             <select name="addTcrids" class="form-select">
                 <option value="">-- Select Course --</option>
                 <option th:each="crs : ${canAdd}" 
-                        th:value="${crs[3]}" 
+                        th:value="${crs[0]}" 
                         th:text="${crs[0]} + ' | ' + ${crs[1]} + ' | ' + ${crs[2]}"></option>
             </select>
         </div>
@@ -50,7 +50,7 @@
                     <select th:name="'dropId' + ${tIdx}" class="form-select border-danger">
                         <option value="">-- None --</option>
                         <option th:each="crs : ${canDrop}" 
-                                th:value="${crs[3]}" 
+                                th:value="${crs[0]}" 
                                 th:text="${crs[0]} + ' | ' + ${crs[1]} + ' | ' + ${crs[2]}"></option>
                     </select>
                 </div>
@@ -60,7 +60,7 @@
                     <select th:name="'replaceIds' + ${tIdx}" class="form-select">
                         <option value="">-- Select Replacement --</option>
                         <option th:each="crs : ${canAdd}" 
-                                th:value="${crs[3]}" 
+                                th:value="${crs[0]}" 
                                 th:text="${crs[0]} + ' | ' + ${crs[1]} + ' | ' + ${crs[2]}"></option>
                     </select>
                 </div>

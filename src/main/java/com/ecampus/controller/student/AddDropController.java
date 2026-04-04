@@ -75,13 +75,13 @@ public class AddDropController {
     @Transactional
     public String processAddDrop(
             @RequestParam("addCount") Long addCount,
-            @RequestParam(value = "addTcrids", required = false) List<Long> addTcrids,
-            @RequestParam(value = "dropId1", required = false) Long dropId1,
-            @RequestParam(value = "replaceIds1", required = false) List<Long> replaceIds1,
-            @RequestParam(value = "dropId2", required = false) Long dropId2,
-            @RequestParam(value = "replaceIds2", required = false) List<Long> replaceIds2,
-            @RequestParam(value = "dropId3", required = false) Long dropId3,
-            @RequestParam(value = "replaceIds3", required = false) List<Long> replaceIds3,
+            @RequestParam(value = "addTcrids", required = false) List<String> addTcrids,
+            @RequestParam(value = "dropId1", required = false) String dropId1,
+            @RequestParam(value = "replaceIds1", required = false) List<String> replaceIds1,
+            @RequestParam(value = "dropId2", required = false) String dropId2,
+            @RequestParam(value = "replaceIds2", required = false) List<String> replaceIds2,
+            @RequestParam(value = "dropId3", required = false) String dropId3,
+            @RequestParam(value = "replaceIds3", required = false) List<String> replaceIds3,
             Authentication authentication
     ) {
 
