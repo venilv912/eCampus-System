@@ -1,6 +1,9 @@
 package com.ecampus.controller.student;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +47,9 @@ public class AddDropController {
 
     @Autowired
     private AddDropPreferencesRepository addDropPrefRepo;
+
+    @Autowired
+    private CoursesRepository crsRepo;
 
     @GetMapping("/student/addDrop")
     public String getcourses(Authentication authentication, Model model){
@@ -141,7 +147,61 @@ public class AddDropController {
             addDropPrefRepo.save(addDropPref);
         }
 
-        return "redirect:/student/dashboard";
+        return "redirect:/student/addDrop/view";
+    }
+
+    @GetMapping("/student/addDrop/view")
+    public String viewAddDropPreferences(Model model, Authentication authentication) {
+        String username = authentication.getName();
+        Long studentId = userRepo.findIdByUname(username);
+
+        // 1. Fetch the raw preferences
+        AddDropPreferences prefs = addDropPrefRepo.findBySid(studentId);
+        
+        if (prefs == null) {
+            return "redirect:/student/addDrop?error=NoPreferencesFound";
+        }
+
+        // 2. We need a way to show Course Names instead of just IDs
+        // We will pass the prefs to the model, but we also need to pass 
+        // a Map of crscode -> Course Details for the UI to look up
+        model.addAttribute("prefs", prefs);
+        
+        // 3. Fetch details for all selected courses to display them properly
+        // This helper method finds all unique crscode in the prefs and gets their info
+        model.addAttribute("courseDetails", getCourseDetailMap(prefs));
+
+        return "student/viewAddDrop";
+    }
+
+    private Map<String, Object[]> getCourseDetailMap(AddDropPreferences p) {
+        List<String> allIds = new ArrayList<>();
+
+        if(p.getAddp1() != null) allIds.add(p.getAddp1());
+        if(p.getAddp2() != null) allIds.add(p.getAddp2());
+        if(p.getAddp3() != null) allIds.add(p.getAddp3());
+        if(p.getAddp4() != null) allIds.add(p.getAddp4());
+        if(p.getDrop1() != null) allIds.add(p.getDrop1());
+        if(p.getDrop1_p1() != null) allIds.add(p.getDrop1_p1());
+        if(p.getDrop1_p2() != null) allIds.add(p.getDrop1_p2());
+        if(p.getDrop1_p3() != null) allIds.add(p.getDrop1_p3());
+        if(p.getDrop2() != null) allIds.add(p.getDrop2());
+        if(p.getDrop2_p1() != null) allIds.add(p.getDrop2_p1());
+        if(p.getDrop2_p2() != null) allIds.add(p.getDrop2_p2());
+        if(p.getDrop2_p3() != null) allIds.add(p.getDrop2_p3());
+        if(p.getDrop3() != null) allIds.add(p.getDrop3());
+        if(p.getDrop3_p1() != null) allIds.add(p.getDrop3_p1());
+        if(p.getDrop3_p2() != null) allIds.add(p.getDrop3_p2());
+        if(p.getDrop3_p3() != null) allIds.add(p.getDrop3_p3());
+        
+        // Query repository for details: Map<code, Object[]{code, name, ltpc}>
+        List<Object[]> details = crsRepo.findCrsByListTcrids(allIds);
+        
+        Map<String, Object[]> map = new HashMap<>();
+        for(Object[] row : details) {
+            map.put(row[0].toString(), row);
+        }
+        return map;
     }
     
 }

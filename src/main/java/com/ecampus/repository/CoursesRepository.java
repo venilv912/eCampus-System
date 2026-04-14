@@ -92,4 +92,7 @@ WHERE cgc.CGCROWSTATE > 0
     @Query("SELECT c FROM Courses c WHERE LOWER(c.crsname) LIKE LOWER(CONCAT('%', :query, '%')) OR LOWER(c.crscode) LIKE LOWER(CONCAT('%', :query, '%'))")
     List<Courses> searchCourses(@Param("query") String query);
 
+    @Query(value = "select crs.crscode,crs.crsname,CONCAT(crs.crslectures, '-', crs.crstutorials, '-', crs.crspracticals, '-', crs.crscreditpoints) as ltpc from ec2.courses crs where crs.crscode in (:ids)", nativeQuery = true)
+    List<Object[]> findCrsByListTcrids(@Param("ids") List<String> ids);
+
 }

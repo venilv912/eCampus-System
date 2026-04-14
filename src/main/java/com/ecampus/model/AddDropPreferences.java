@@ -112,7 +112,7 @@ public class AddDropPreferences {
     public String getDrop1_p3(){ return drop1_p3; }
     public void setDrop1_p3(String drop1_p3){ this.drop1_p3 = drop1_p3; }
 
-    public String getDrop20(){ return drop2; }
+    public String getDrop2(){ return drop2; }
     public void setDrop2(String drop2){ this.drop2 = drop2; }
 
     public String getDrop2_p1(){ return drop2_p1; }
