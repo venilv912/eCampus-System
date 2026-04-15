@@ -1,5 +1,6 @@
 package com.ecampus.controller.student;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 
@@ -51,8 +53,11 @@ public class AddDropController {
     @Autowired
     private CoursesRepository crsRepo;
 
+    @Autowired
+    private RegistrationOpenForRepository registrationOpenForRepo;
+
     @GetMapping("/student/addDrop")
-    public String getcourses(Authentication authentication, Model model){
+    public String getcourses(Authentication authentication, Model model, RedirectAttributes redirectAttributes){
 
         String username = authentication.getName();
 
@@ -61,6 +66,19 @@ public class AddDropController {
         Students st = registrationService.getStudentById(studentId);
 
         Long trmid = termRepo.findMaxTrmid();
+
+        RegistrationOpenFor rof = registrationOpenForRepo.getRofByTrmBch(trmid,st.getStdbchid(),"AddDrop");
+
+        if(rof==null || LocalDateTime.now().isBefore(rof.getStartdate())){
+            redirectAttributes.addFlashAttribute("error", "Add/Drop is not yet open.");
+            return "redirect:/student/dashboard";
+        }
+
+        if(LocalDateTime.now().isAfter(rof.getEnddate())){
+            redirectAttributes.addFlashAttribute("error", "Add/Drop has ended.");
+            return "redirect:/student/dashboard";
+        }
+
         Long strid = semRepo.findSemByBchAndTrm(st.getStdbchid(),trmid);
         StudentRegistrations stdReg = stdRegRepo.findByStudentIdAndSemesterId(studentId, strid);
 
@@ -151,7 +169,7 @@ public class AddDropController {
     }
 
     @GetMapping("/student/addDrop/view")
-    public String viewAddDropPreferences(Model model, Authentication authentication) {
+    public String viewAddDropPreferences(Model model, Authentication authentication, RedirectAttributes redirectAttributes) {
         String username = authentication.getName();
         Long studentId = userRepo.findIdByUname(username);
 
@@ -159,7 +177,8 @@ public class AddDropController {
         AddDropPreferences prefs = addDropPrefRepo.findBySid(studentId);
         
         if (prefs == null) {
-            return "redirect:/student/addDrop?error=NoPreferencesFound";
+            redirectAttributes.addFlashAttribute("error", "No Add/Drop record found.");
+            return "redirect:/student/dashboard";
         }
 
         // 2. We need a way to show Course Names instead of just IDs

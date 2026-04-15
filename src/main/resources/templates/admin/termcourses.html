@@ -57,6 +57,8 @@
                                 </form>
                                 <a th:href="@{/admin/term-courses/edit(termId=${termIdMap[academicYearEntry.key][termEntry.key]})}" 
                                    class="btn btn-sm btn-outline-secondary">Edit Term Courses</a>
+                                <a th:href="@{/admin/openfor(termId=${termIdMap[academicYearEntry.key][termEntry.key]})}" 
+                                   class="btn btn-sm btn-outline-secondary">Specify Open For</a>
                             </div>
                         </div>
                     </th>

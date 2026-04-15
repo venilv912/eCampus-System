@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ecampus.model.*;
 import com.ecampus.repository.*;
@@ -35,6 +36,7 @@ public class ComputeResultService {
     @Autowired
     private StudentSemesterResultRepository ssrRepo;
 
+    @Transactional
     public void computeResult(Long strid) {
 
         List<StudentRegistrations> stdRegs = stdRegRepo.findByStrid(strid);
