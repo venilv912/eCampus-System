@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,9 +26,6 @@ import com.ecampus.service.SpecifyOpenForService;
 public class SpecifyOpenForController {
 
     @Autowired
-    private TermsRepository TermRepo;
-
-    @Autowired
     private BatchesRepository BatchRepo;
 
     @Autowired
@@ -39,9 +35,9 @@ public class SpecifyOpenForController {
     private SpecifyOpenForService OpenForService;
     
     @GetMapping
-    public String bchAndprg(Model model){
+    public String bchAndprg(@RequestParam("termId") Long currTermId, Model model){
 
-        Long currTermId = TermRepo.findMaxTrmid();
+        // Long currTermId = TermRepo.findMaxTrmid();
         List<String> programs = SchemeDetailsRepo.findProgramsByTrm(currTermId);
 
         List<String> batches = BatchRepo.findBatchesByTrmId(currTermId);
@@ -54,9 +50,9 @@ public class SpecifyOpenForController {
 
     @GetMapping("/getBatches")
     @ResponseBody
-    public List<String> getBatches(@RequestParam String prgname) {
-        Long currTermId = TermRepo.findMaxTrmid();
-
+    public List<String> getBatches(@RequestParam String prgname, @RequestParam Long currTermId) {
+        // Long currTermId = TermRepo.findMaxTrmid();
+        
         // Finding the batches for the selected program from the dropdown to display in the batches dropdown
         return BatchRepo.findBatchBySplnTrm(prgname, currTermId);
         //return SchemeDetailsRepo.findProgramsByBatch(bchname); 
@@ -121,31 +117,31 @@ public class SpecifyOpenForController {
             OpenForService.updateElectiveType(selectedTcaIds, electiveCode, ctpid);
         }
 
-        redirectAttributes.addFlashAttribute("batch", batch);
-        redirectAttributes.addFlashAttribute("program", program);
-        redirectAttributes.addFlashAttribute("termId", termId);
+        redirectAttributes.addAttribute("batch", batch);
+        redirectAttributes.addAttribute("program", program);
+        redirectAttributes.addAttribute("termId", termId);
         
         return "redirect:/admin/openfor/reload";
     }
 
     @GetMapping("/reload")
-    public String reloadPage(@ModelAttribute("batch") String batch,
-                             @ModelAttribute("program") String program,
-                             @ModelAttribute("termId") Long termId,
+    public String reloadPage(@RequestParam(value = "batch", required = false) String batch,
+                             @RequestParam(value = "program", required = false) String program,
+                             @RequestParam(value = "termId", required = false) Long currTermId,
                              Model model) {
         // Re-setup initial dropdowns
-        Long currTermId = TermRepo.findMaxTrmid();
+        // Long currTermId = TermRepo.findMaxTrmid();
         List<String> programs = SchemeDetailsRepo.findProgramsByTrm(currTermId);
         model.addAttribute("programs", programs);
         model.addAttribute("currTermId", currTermId);
 
         // Pre-set the view with data
-        prepareCourseData(batch, program, termId, model);
+        prepareCourseData(batch, program, currTermId, model);
 
         // IMPORTANT: Populate these so the "Add Course" links work after reload
         model.addAttribute("selectedBatch", batch);
         model.addAttribute("selectedProgram", program);
-        model.addAttribute("selectedTermId", termId);
+        model.addAttribute("selectedTermId", currTermId);
 
         // For the Javascript window.onload
         model.addAttribute("preSelectedBatch", batch);
@@ -160,9 +156,9 @@ public class SpecifyOpenForController {
                              Long termId,
                              RedirectAttributes redirectAttributes) {
                                 
-        redirectAttributes.addFlashAttribute("batch", batch);
-        redirectAttributes.addFlashAttribute("program", program);
-        redirectAttributes.addFlashAttribute("termId", termId);
+        redirectAttributes.addAttribute("batch", batch);
+        redirectAttributes.addAttribute("program", program);
+        redirectAttributes.addAttribute("termId", termId);
 
         return "redirect:/admin/openfor/reload";
     }

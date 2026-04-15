@@ -1,5 +1,6 @@
 package com.ecampus.controller.student;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ecampus.model.*;
 import com.ecampus.repository.*;
@@ -50,7 +52,7 @@ public class ElectiveRegistrationController {
     private StudentCourseRequirementsRepository studCourseReqRepo;
     
     @GetMapping("/student/electiveRegistration")
-    public String getcourses(Authentication authentication, Model model){
+    public String getcourses(Authentication authentication, Model model, RedirectAttributes redirectAttributes){
 
         String username = authentication.getName();
 
@@ -60,9 +62,17 @@ public class ElectiveRegistrationController {
 
         Long trmid = semestersRepo.findMaxTrmIdByBchId(st.getStdbchid());
 
-        RegistrationOpenFor rof = registrationOpenForRepo.getRofByTrmBch(trmid,st.getStdbchid(),"registration");
+        RegistrationOpenFor rof = registrationOpenForRepo.getRofByTrmBch(trmid,st.getStdbchid(),"Elective");
 
-        model.addAttribute("rof", rof);
+        if(rof==null || LocalDateTime.now().isBefore(rof.getStartdate())){
+            redirectAttributes.addFlashAttribute("error", "Elective Registration is not yet open.");
+            return "redirect:/student/dashboard";
+        }
+
+        if(LocalDateTime.now().isAfter(rof.getEnddate())){
+            redirectAttributes.addFlashAttribute("error", "Elective Registration has ended.");
+            return "redirect:/student/dashboard";
+        }
 
         List<Object[]> results = termCoursesRepo.findCoursesBySlot(trmid, "ELECTIVE", st.getStdbchid());
 
@@ -190,7 +200,7 @@ public class ElectiveRegistrationController {
     }
 
     @GetMapping("/student/electiveRegistration/view")
-    public String viewRegistration(Authentication authentication, Model model){
+    public String viewRegistration(Authentication authentication, Model model, RedirectAttributes redirectAttributes){
 
         String username = authentication.getName();
 
@@ -199,6 +209,11 @@ public class ElectiveRegistrationController {
         List<Object[]> requirements = studCourseReqRepo.getBySid(studentId);
         List<Object[]> slotPref = slotPrefRepo.getBySid(studentId);
         List<CoursePreferences> coursePref = coursePrefRepo.getBySid(studentId);
+
+        if(requirements==null || slotPref==null || coursePref==null){
+            redirectAttributes.addFlashAttribute("error", "No Elective Registration record found.");
+            return "redirect:/student/dashboard";
+        }
 
         Map<Long, List<CoursePreferences>> grouped = coursePref.stream()
         .collect(Collectors.groupingBy(

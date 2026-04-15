@@ -125,6 +125,7 @@
         function fetchBatches() {
             const programId = document.getElementById("programSelect").value;
             const batchSelect = document.getElementById("batchSelect");
+            const termId = document.getElementById("currTermId").value;
 
             if (!programId) {
                 batchSelect.innerHTML = '<option value="">-- Choose Program First --</option>';
@@ -133,7 +134,7 @@
             }
 
             // Call the background function to get batches
-            fetch(`/admin/openfor/getBatches?prgname=${programId}`)
+            fetch(`/admin/openfor/getBatches?prgname=${programId}&currTermId=${termId}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log("Batches received from server:", data);

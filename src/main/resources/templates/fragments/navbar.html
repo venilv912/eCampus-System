@@ -80,6 +80,30 @@
             <a th:href="@{/admin/dashboard}">Dashboard</a>
         </li>
 
+        <!-- Admin Dropdown for Open Dates -->
+        <li class="dropdown" sec:authorize="hasAuthority('ADMIN')">
+            <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
+                Open Registration
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a class="dropdown-item" th:href="@{/admin/registrationopen}">
+                        Semester Registration
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" th:href="@{/admin/electiveregistrationopen}">
+                        Elective Registration
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" th:href="@{/admin/adddropopen}">
+                        Add/Drop
+                    </a>
+                </li>
+            </ul>
+        </li>
+
         <li sec:authorize="hasAuthority('ADMIN')">
             <a th:href="@{/admin/programs}">Programs</a>
         </li>
@@ -132,6 +156,10 @@
 
         <li sec:authorize="hasAuthority('ADMIN')">
             <a th:href="@{/admin/graduation-requirements/batches}">Graduation Requirements</a>
+        </li>
+
+        <li sec:authorize="hasAuthority('ADMIN')">
+            <a th:href="@{/admin/computeResult}">Compute Result</a>
         </li>
 
         <!--===================== Rit ==========================-->

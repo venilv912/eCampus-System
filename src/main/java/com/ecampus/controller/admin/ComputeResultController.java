@@ -51,12 +51,17 @@ public class ComputeResultController {
         // Your logic to compute results for the specific semester
         System.out.println("Computing results for Semester ID: " + semId);
 
-        computeResultService.computeResult(semId);
-
         String username = authentication.getName();
         Users user = userRepo.findByUname(username).orElseThrow(() -> new RuntimeException("User not found"));
 
         Semesters currSem = semRepo.findById(semId).orElseThrow(() -> new RuntimeException("Semester not found"));
+
+        if(currSem.getStrfield2().equals("T")){
+            ra.addFlashAttribute("success", "Results already computed for the selected semester.");
+            return "redirect:/admin/computeResult";
+        }
+        computeResultService.computeResult(semId);
+        
         currSem.setStrlastupdatedby(user.getUid());
         currSem.setStrlastupdatedat(LocalDateTime.now());
         currSem.setStrfield2("T");

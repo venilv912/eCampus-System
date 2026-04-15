@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Elective Registration Open For</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+</head>
+
+
+<body>
+
+<!-- HEADER -->
+<div th:replace="fragments/header :: header"></div>
+
+<!-- NAVBAR -->
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<div class="container-lg my-5">
+    <h2 class="mb-4">Open Elective Registration</h2>
+
+    <div th:if="${error}" class="alert alert-danger">
+        <span th:text="${error}"></span>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success">
+        <span th:text="${success}"></span>
+    </div>
+
+    <form th:action="@{/admin/electiveregistrationopen/saveelectiveregistrationdate}" method="post">
+        
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">Choose Dates</div>
+            <div class="card-body row">
+                <div class="col-md-6 mb-3">
+                    <label for="startDate" class="form-label">Start Date</label>
+                    <input type="datetime-local" id="startDate" name="startDate" class="form-control" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="endDate" class="form-label">End Date</label>
+                    <input type="datetime-local" id="endDate" name="endDate" class="form-control" required>
+                </div>
+            </div>
+        </div>
+
+        <div th:each="entry : ${ugPgMap}">
+            <h3 th:text="${entry.key}" class="mt-4 border-bottom pb-2">UG/PG</h3>
+            <table class="table table-striped table-hover mt-2">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Program</th>
+                        <th>Batch</th>
+                        <th>Current Start Date</th>
+                        <th>Current End Date</th>
+                        <th class="text-center">Select</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="row : ${entry.value}">
+                        <td th:text="${row[3]}">Program</td>
+                        <td th:text="${row[1]}">Batch</td>
+                        
+                        <td th:text="${row[4] != null ? #dates.format(row[4], 'dd-MMM-yyyy HH:mm') : '-'}">-</td>
+                        <td th:text="${row[5] != null ? #dates.format(row[5], 'dd-MMM-yyyy HH:mm') : '-'}">-</td>
+                        
+                        <td class="text-center">
+                            <input type="checkbox" 
+                                name="selectedBchIds" 
+                                th:value="${row[0]}" 
+                                class="form-check-input">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-4 mb-5">
+            <button type="submit" class="btn btn-success btn-lg w-100">Save Elective Registration Settings</button>
+        </div>
+        
+    </form>
+</div>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

@@ -17,6 +17,10 @@
 
     <h1> Student Dashboard </h1>
 
+    <div th:if="${error}" class="alert alert-danger">
+        <span th:text="${error}"></span>
+    </div>
+
     <!-- FOOTER -->
     <div th:replace="fragments/footer :: footer"></div>
 </body>
